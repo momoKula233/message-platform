@@ -1,2 +1,6 @@
-client
-client\(angualr2\)/ß
+*.venv
+*node_modules
+venv
+*.idea
+
+

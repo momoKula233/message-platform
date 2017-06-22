@@ -8,14 +8,14 @@ from server.model import User
 
 user = Blueprint('user', __name__)
 
-@user.route('/api/user/u<int: id>')
+@user.route('/user/u<int: id>')
 @db_session
 def get_user(id):
   user=User.get(id)
   return json.dumps(user.describe(), default=json_converter)
 
 
-@user.route('/api/user/u<int: id>', methonds=['post'])
+@user.route('/user/u<int: id>', methonds=['post'])
 @db_session
 def update_user(id):
   user=User.get(id=id)
