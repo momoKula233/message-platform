@@ -1,6 +1,7 @@
 import os
 import random
 import string
+from flask_jwt import JWT, jwt_required, current_identity
 
 from flask import send_from_directory, request, Blueprint
 
@@ -37,3 +38,8 @@ def get_img(id):
   path = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)), 'images')
   print (path, id)
   return send_from_directory(path, id, as_attachment=True)
+
+@image.route('/test/<string:id>')
+@jwt_required()
+def test(id):
+  return id

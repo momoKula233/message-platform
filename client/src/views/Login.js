@@ -13,7 +13,7 @@ class App extends React.Component {
         })
         console.log(data);
         if(data.success) {
-          localStorage.setItem('TOKEN', data.access_token)
+          localStorage.setItem('TOKEN', JSON.stringify(data))
         }
       }
     });
