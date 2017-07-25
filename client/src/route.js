@@ -6,6 +6,8 @@ import Login from './views/Login';
 import Register from './views/Register';
 import Home from './views/Home';
 import User from './views/UserIndex';
+import UserStore from './store/';
+import { Provider } from 'mobx-react';
 
 const {Header, Content, Sider} = Layout;
 
@@ -17,8 +19,11 @@ const routes = [
 ];
 
 export default class Router extends React.PureComponent {
+  userStore = new UserStore();
   render() {
-    return (<BrowserRouter>
+    return (
+    <Provider user={this.userStore}>
+    <BrowserRouter>
       <Layout>
         <Switch>
           {routes.map((route, index) => {
@@ -43,6 +48,7 @@ export default class Router extends React.PureComponent {
           })}
         </Switch>
       </Layout>
-    </BrowserRouter>)
+    </BrowserRouter>
+    </Provider>)
   }
 }

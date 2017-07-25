@@ -23,4 +23,4 @@ from server.app import app
 from server.model import db
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()

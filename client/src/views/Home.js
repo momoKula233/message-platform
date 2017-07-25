@@ -1,6 +1,7 @@
 import React from 'react';
 import UserStore from '../store';
 import {Table, Icon, Button, Modal} from 'antd';
+import http from '../services';
 
 const userStore = new UserStore();
 
@@ -57,6 +58,11 @@ export default class Home extends React.Component {
     if (!userStore.isLoggedIn) window.location.href = '/login';
   }
 
+  async componentWillMount() {
+    const {user} = await http.get('/myprofile');
+    if(!user) window.location.herf = '/login';
+  }
+
   rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
       console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
@@ -65,6 +71,8 @@ export default class Home extends React.Component {
       disabled: record.name === 'Disabled User',    // Column configuration not to be checked
     }),
   };
+
+hideModal = () => this.setState({ visible: false })
 
   render() {
     if (!userStore.isLoggedIn) return null;
@@ -77,9 +85,7 @@ export default class Home extends React.Component {
         okText="确认"
         cancelText="取消"
       >
-        <p>Bla bla ...</p>
-        <p>Bla bla ...</p>
-        <p>Bla bla ...</p>
+        
       </Modal>
       <Button onClick={() => this.setState({ visible: true })} className="create-button">create message</Button>
       <Table className="table-info" columns={columns} dataSource={data}/>

@@ -11,7 +11,6 @@ class App extends React.Component {
           display_name: values['username'],
           password: values['password'],
         })
-        console.log(data);
         if(data.success) {
           localStorage.setItem('TOKEN', JSON.stringify(data))
         }

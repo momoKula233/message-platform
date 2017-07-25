@@ -5,21 +5,22 @@ db = Database('sqlite', 'database.sqlite', create_db=True)
 
 class User(db.Entity):
   _table_='user'
-  display_name=Required(str, index=True)
+  username=Required(str, index=True)
   age=Optional(int)
-  password=Optional(str)
+  password=Required(str)
+  user_id=Required(datetime.datetime, index=True)
   gender=Required(str)
   created_at=Required(datetime.datetime, index=True)
   avatar=Optional(str)
-  notice=Set('Message')
+  notices=Set('Notice')
   def describe(self):
     return dict(id=self.id,
-                display_name=self.display_name,
-                password=self.password,
+                username=self.username,
+                age=self.age,
                 gender=self.gender,
                 avatar=self.avatar)
 
-class Message(db.Entity):
+class Notice(db.Entity):
   __table__='notice'
   title=Required(str)
   created_at=Required(datetime.datetime)

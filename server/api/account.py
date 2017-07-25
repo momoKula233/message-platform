@@ -1,9 +1,8 @@
 from flask import request, jsonify, Blueprint
 from flask_jwt_extended import JWTManager, jwt_required,\
-    create_access_token, get_jwt_identity
+    create_access_token, get_jwt_identity, fresh_jwt_required, jwt_refresh_token_required
 
 from pony.orm import db_session, exists, commit
-from pony.orm import db_session, commit
 from pony.orm.serialization import json_converter
 from server.model import User
 import datetime
@@ -15,15 +14,16 @@ account = Blueprint('account', __name__)
 @db_session
 def register():
     req = request.get_json()
-    if not exists(u.id for u in User if u.display_name == req['display_name']):
+    if not exists(u.id for u in User if u.username == req['display_name']):
         now = datetime.datetime.now()
-        User(display_name=req['display_name'],
+        User(username=req['display_name'],
              gender=req['gender'],
              avatar=req['avatar'],
              age=req['age'],
+             user_id=now,
              password=req['password'],
              created_at=now)
-        user = User.get(display_name=req['display_name'])
+        user = User.get(username=req['display_name'])
         return jsonify(success=True, user=user.describe(), access_token=create_access_token(identity=user.describe()))
     else:
         return jsonify(success=False, err='INVAILD_USERNAME')
@@ -33,7 +33,7 @@ def register():
 @db_session
 def login():
     req = request.get_json(force=True)
-    user = User.get(display_name=req['display_name'])
+    user = User.get(username=req['display_name'])
     if not user:
         return jsonify(success=False,err="INVAILD_USER")
     if user.password == req['password']:
@@ -50,3 +50,23 @@ def protected():
     if not user:
         return jsonify(err='INVALID_AUTHORIZATION'), 401
     return jsonify(user=user.describe()), 200
+
+@account.route('/refresh')
+@db_session
+@fresh_jwt_required
+def refresh():
+    current_id = get_jwt_identity()
+    user = User.get(id=current_id)
+    if not user:
+        return jsonify(err='INVALID_AUTHORIZATION'), 401
+    return jsonify(user=user.describe()), 200
+
+# @account.route('/protected')
+# @db_session
+# @fresh_jwt_required
+# def protected():
+#     current_id = get_jwt_identity()
+#     user = User.get(id=current_id)
+#     if not user:
+#         return jsonify(err='INVALID_AUTHORIZATION'), 401
+#     return jsonify(user=user.describe()), 200
